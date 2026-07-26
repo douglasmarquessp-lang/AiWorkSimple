@@ -1,4 +1,3 @@
---- components/dashboard-mockup.tsx ---
 import {
   LayoutDashboard,
   PenLine,

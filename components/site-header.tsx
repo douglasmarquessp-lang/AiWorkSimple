@@ -1,8 +1,8 @@
 'use client'
+
 import { useEffect, useState } from 'react'
 import { Menu, X, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
@@ -11,6 +11,21 @@ const navLinks = [
   { label: 'Guides', href: '#guides' },
   { label: 'Resources', href: '#resources' },
 ]
+
+function LocalLogo() {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2.5 14.4 9l6.6 2.4L14.4 14 12 20.5 9.6 14 3 11.4 9.6 9 12 2.5Z" fill="currentColor" />
+        </svg>
+      </span>
+      <span className="text-lg font-semibold tracking-tight text-foreground">
+        AIWork<span className="text-primary">Simple</span>
+      </span>
+    </span>
+  )
+}
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
@@ -34,7 +49,7 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <a href="#top" className="shrink-0" aria-label="AIWorkSimple home">
-          <Logo />
+          <LocalLogo />
         </a>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">

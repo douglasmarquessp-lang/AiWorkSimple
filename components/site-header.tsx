@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useState } from 'react'
 import { Menu, X, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'

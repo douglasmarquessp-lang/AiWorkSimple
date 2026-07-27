@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Article {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  title           String
+  excerpt         String
+  content         String
+  category        String
+  emoji           String   @default("⚡")
+  imageUrl        String?
+  authorName      String?  @default("Douglas Marques")
+  published       Boolean  @default(true)
+  metaDescription String?
+  views           Int      @default(0)
+  shares          Int      @default(0)
+  isFeatured      Boolean  @default(false)
+  isTrending      Boolean  @default(false)
+  readTime        String   @default("3 min")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

@@ -8,7 +8,7 @@ export default function AdminPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'audit'>('content');
   
-  // Estados do Formulário
+  // Form State
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -23,17 +23,16 @@ export default function AdminPage() {
   const [isTrending, setIsTrending] = useState(false);
   const [published, setPublished] = useState(true);
 
-  // Estados exclusivos de SEO e Auditoria
+  // SEO & Audit State
   const [focusKeyword, setFocusKeyword] = useState('AI productivity tools');
   const [metaDescription, setMetaDescription] = useState('');
   const [secondaryKeywords, setSecondaryKeywords] = useState('');
   const [searchIntent, setSearchIntent] = useState('Informational');
 
-  // Carrega os artigos no cliente ao montar a página
+  // Load articles on mount
   useEffect(() => {
     getArticlesAction().then(res => setArticles(res));
     
-    // Captura se há ID de edição na URL do navegador
     const params = new URLSearchParams(window.location.search);
     const editId = params.get('id');
     if (editId) {
@@ -59,23 +58,23 @@ export default function AdminPage() {
     }
   }, []);
 
-  // ALGORITMO DE AUDITORIA DE SEO EM TEMPO REAL (Zero-Custo)
+  // REAL-TIME CLIENT-SIDE SEO AUDIT ALGORITHM (Zero-Cost)
   const auditKeywordInTitle = title.toLowerCase().includes(focusKeyword.toLowerCase()) && focusKeyword !== '';
   const auditKeywordInIntro = content.slice(0, 200).toLowerCase().includes(focusKeyword.toLowerCase()) && focusKeyword !== '';
   const auditKeywordInMeta = metaDescription.toLowerCase().includes(focusKeyword.toLowerCase()) && focusKeyword !== '';
   
-  // Densidade de palavras-chave
+  // Keyword density calculation
   const words = content.trim().split(/\s+/).filter(Boolean);
   const totalWords = words.length;
   const keywordMatches = focusKeyword ? (content.match(new RegExp(focusKeyword, 'gi')) || []).length : 0;
   const keywordDensity = totalWords > 0 ? parseFloat(((keywordMatches / totalWords) * 100).toFixed(1)) : 0;
   const isDensityHealthy = keywordDensity >= 0.8 && keywordDensity <= 2.5;
 
-  // Contagem de Links
-  const internalLinks = (content.match(/href="\/(artigo|noticias|\?)/gi) || []).length;
-  const externalLinks = (content.match(/href="https?:\/\/(?!futuroagora\.tech)[^"]+"/gi) || []).length;
+  // Link counters
+  const internalLinks = (content.match(/href="\/(articles|noticias|\?)/gi) || []).length;
+  const externalLinks = (content.match(/href="https?:\/\/(?!aiworksimple\.com)[^"]+"/gi) || []).length;
 
-  // Cálculo Dinâmico de Nota de SEO (SEO Score)
+  // Dynamic SEO Score Calculation
   let seoScore = 30;
   if (auditKeywordInTitle) seoScore += 20;
   if (auditKeywordInIntro) seoScore += 15;
@@ -84,7 +83,7 @@ export default function AdminPage() {
   if (internalLinks >= 2) seoScore += 5; else if (internalLinks === 1) seoScore += 2;
   if (externalLinks >= 3) seoScore += 5;
 
-  // Salvar alterações
+  // Handle Save
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await saveArticleAction({
@@ -97,7 +96,7 @@ export default function AdminPage() {
     }
   };
 
-  // Excluir artigo
+  // Handle Delete
   const handleDelete = async (artId: string) => {
     if (confirm('Are you sure you want to delete this article?')) {
       const result = await deleteArticleAction(artId);
@@ -115,10 +114,10 @@ export default function AdminPage() {
 
       <div className="two-col" style={{ gridTemplateColumns: '1fr 340px' }}>
         
-        {/* COLUNA PRINCIPAL: EDITOR COM ABAS INTERATIVAS */}
+        {/* MAIN COLUMN: TABBED EDITOR */}
         <div className="col-main" style={{ padding: '30px', background: '#fff', border: '2.5px solid var(--ink)', borderRadius: '6px' }}>
           
-          {/* BARRA DE ABAS */}
+          {/* TABS */}
           <div style={{ display: 'flex', borderBottom: '2.5px solid var(--ink)', marginBottom: '25px' }}>
             <button type="button" onClick={() => setActiveTab('content')} style={{ flex: 1, padding: '12px', background: activeTab === 'content' ? 'var(--ink)' : 'none', color: activeTab === 'content' ? '#fff' : 'var(--ink)', border: 'none', fontWeight: 800, textTransform: 'uppercase', fontSize: '0.8rem', cursor: 'pointer' }}>
               📝 1. Content
@@ -133,7 +132,7 @@ export default function AdminPage() {
 
           <form onSubmit={handleSave}>
             
-            {/* ABA 1: CONTEÚDO */}
+            {/* TAB 1: CONTENT */}
             {activeTab === 'content' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <div className="form-group">
@@ -185,7 +184,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* ABA 2: CONFIGURAÇÕES DE SEO */}
+            {/* TAB 2: SEO META */}
             {activeTab === 'seo' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 <div className="form-group">
@@ -208,7 +207,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className="form-group">
-                  <label>SEO Meta Title (Google search results title)</label>
+                  <label>SEO Meta Title</label>
                   <input type="text" className="form-input" value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="If empty, article title is used" />
                 </div>
 
@@ -231,7 +230,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* ABA 3: RELATÓRIO DE AUDITORIA DE SEO REAL-TIME */}
+            {/* TAB 3: REAL-TIME SEO AUDIT */}
             {activeTab === 'audit' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ padding: '20px', background: 'var(--warm)', border: '2px solid var(--ink)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -245,36 +244,35 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                {/* Lista de Critérios Analisados */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyStyle: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                     <span style={{ flex: 1 }}>Focus keyword in Title (H1):</span>
                     <span>{auditKeywordInTitle ? '✅ Yes (+20 pts)' : '❌ Missing (0 pts)'}</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyStyle: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                     <span style={{ flex: 1 }}>Focus keyword in Introduction:</span>
                     <span>{auditKeywordInIntro ? '✅ Yes (+15 pts)' : '❌ Missing (0 pts)'}</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyStyle: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                     <span style={{ flex: 1 }}>Focus keyword in Meta Description:</span>
                     <span>{auditKeywordInMeta ? '✅ Yes (+15 pts)' : '❌ Missing (0 pts)'}</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyStyle: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                     <span style={{ flex: 1 }}>Keyword density (Currently <strong>{keywordDensity}%</strong>):</span>
                     <span style={{ color: isDensityHealthy ? 'var(--green)' : 'var(--gold)', fontWeight: 'bold' }}>
                       {isDensityHealthy ? '✅ Ideal (0.8% - 2.5%)' : '⚠️ Unbalanced (<0.8% or >2.5%)'}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyStyle: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                     <span style={{ flex: 1 }}>Internal Links (Currently <strong>{internalLinks}</strong>):</span>
                     <span>{internalLinks >= 2 ? '✅ Sufficient' : '⚠️ Only 1 or less'}</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyStyle: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                     <span style={{ flex: 1 }}>External Authoritative Links (Currently <strong>{externalLinks}</strong>):</span>
                     <span>{externalLinks >= 3 ? '✅ Excellent' : '⚠️ Add more external sources'}</span>
                   </div>
@@ -296,7 +294,7 @@ export default function AdminPage() {
           </form>
         </div>
 
-        {/* BARRA LATERAL: ARTIGOS ATIVOS COM VIEWS */}
+        {/* SIDEBAR LIST */}
         <div className="col-side" style={{ padding: '20px', background: 'var(--warm)', border: '2.5px solid var(--ink)', borderRadius: '6px', height: 'fit-content' }}>
           <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', marginBottom: '15px' }}>Articles ({articles.length})</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

@@ -31,13 +31,13 @@ export default function AdminPage() {
 
   // Load articles on mount
   useEffect(() => {
-    getArticlesAction().then(res => setArticles(res));
+    getArticlesAction().then((res: any) => setArticles(res || []));
     
     const params = new URLSearchParams(window.location.search);
     const editId = params.get('id');
     if (editId) {
-      getArticlesAction().then(res => {
-        const art = res.find(a => a.id === editId);
+      getArticlesAction().then((res: any) => {
+        const art = res.find((a: any) => a.id === editId); // CORREÇÃO: Tipo 'any' adicionado aqui
         if (art) {
           setId(art.id);
           setTitle(art.title);
@@ -174,158 +174,4 @@ export default function AdminPage() {
 
                 <div className="form-group">
                   <label>Excerpt / Summary (Italics Hook)</label>
-                  <input type="text" className="form-input" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required />
-                </div>
-
-                <div className="form-group">
-                  <label>Main Body (Markdown / HTML)</label>
-                  <textarea className="form-input" rows={12} value={content} onChange={(e) => setContent(e.target.value)} required></textarea>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2: SEO META */}
-            {activeTab === 'seo' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div className="form-group">
-                  <label>Focus Keyword 🎯</label>
-                  <input type="text" className="form-input" value={focusKeyword} onChange={(e) => setFocusKeyword(e.target.value)} placeholder="e.g. AI productivity tools" />
-                </div>
-
-                <div className="form-group">
-                  <label>Secondary Keywords (Comma separated)</label>
-                  <input type="text" className="form-input" value={secondaryKeywords} onChange={(e) => setSecondaryKeywords(e.target.value)} placeholder="e.g. best AI tools, workflow automation" />
-                </div>
-
-                <div className="form-group">
-                  <label>Search Intent Type</label>
-                  <select className="form-input" value={searchIntent} onChange={(e) => setSearchIntent(e.target.value)}>
-                    <option value="Informational">Informational (User wants to learn)</option>
-                    <option value="Transactional">Transactional (User wants to buy)</option>
-                    <option value="Commercial">Commercial (User is researching brands)</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>SEO Meta Title</label>
-                  <input type="text" className="form-input" value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="If empty, article title is used" />
-                </div>
-
-                <div className="form-group">
-                  <label>SEO Meta Description (Google snippet - Max 160 chars)</label>
-                  <textarea className="form-input" rows={3} value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="Write an engaging snippet for Google clicks..."></textarea>
-                </div>
-
-                <div className="form-group" style={{ display: 'flex', gap: '20px' }}>
-                  <label className="form-checkbox">
-                    <input type="checkbox" name="published" checked={published} onChange={(e) => setPublished(e.target.checked)} /> Publish Article (Uncheck to save as Draft)
-                  </label>
-                  <label className="form-checkbox">
-                    <input type="checkbox" name="isFeatured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} /> Featured Article
-                  </label>
-                  <label className="form-checkbox">
-                    <input type="checkbox" name="isTrending" checked={isTrending} onChange={(e) => setIsTrending(e.target.checked)} /> Add to Trending
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 3: REAL-TIME SEO AUDIT */}
-            {activeTab === 'audit' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div style={{ padding: '20px', background: 'var(--warm)', border: '2px solid var(--ink)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.8rem', color: 'var(--red)' }}>Live Audit Summary</h3>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Optimizations are calculated automatically as you type.</p>
-                  </div>
-                  <div style={{ textAlign: 'center', background: 'var(--ink)', color: '#fff', padding: '10px 15px', borderRadius: '4px', border: '2px solid var(--red)' }}>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{seoScore}</div>
-                    <div style={{ fontSize: '0.6rem', textTransform: 'uppercase', fontWeight: 800 }}>SEO Score</div>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                    <span style={{ flex: 1 }}>Focus keyword in Title (H1):</span>
-                    <span>{auditKeywordInTitle ? '✅ Yes (+20 pts)' : '❌ Missing (0 pts)'}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                    <span style={{ flex: 1 }}>Focus keyword in Introduction:</span>
-                    <span>{auditKeywordInIntro ? '✅ Yes (+15 pts)' : '❌ Missing (0 pts)'}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                    <span style={{ flex: 1 }}>Focus keyword in Meta Description:</span>
-                    <span>{auditKeywordInMeta ? '✅ Yes (+15 pts)' : '❌ Missing (0 pts)'}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                    <span style={{ flex: 1 }}>Keyword density (Currently <strong>{keywordDensity}%</strong>):</span>
-                    <span style={{ color: isDensityHealthy ? 'var(--green)' : 'var(--gold)', fontWeight: 'bold' }}>
-                      {isDensityHealthy ? '✅ Ideal (0.8% - 2.5%)' : '⚠️ Unbalanced (<0.8% or >2.5%)'}
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                    <span style={{ flex: 1 }}>Internal Links (Currently <strong>{internalLinks}</strong>):</span>
-                    <span>{internalLinks >= 2 ? '✅ Sufficient' : '⚠️ Only 1 or less'}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                    <span style={{ flex: 1 }}>External Authoritative Links (Currently <strong>{externalLinks}</strong>):</span>
-                    <span>{externalLinks >= 3 ? '✅ Excellent' : '⚠️ Add more external sources'}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div style={{ marginTop: '25px', display: 'flex', gap: '15px' }}>
-              <button type="submit" className="admin-btn">
-                {id ? 'Save Changes ⚡' : 'Publish Article ⚡'}
-              </button>
-              {id && (
-                <button type="button" onClick={() => window.location.href = '/admin'} className="admin-btn" style={{ background: '#72728a' }}>
-                  Cancel
-                </button>
-              )}
-            </div>
-
-          </form>
-        </div>
-
-        {/* SIDEBAR LIST */}
-        <div className="col-side" style={{ padding: '20px', background: 'var(--warm)', border: '2.5px solid var(--ink)', borderRadius: '6px', height: 'fit-content' }}>
-          <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', marginBottom: '15px' }}>Articles ({articles.length})</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {articles.map((art) => (
-              <div key={art.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 800, color: 'var(--red)' }}>{art.category}</span>
-                  <span style={{ fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase', padding: '2px 6px', borderRadius: '2px', background: art.published ? 'rgba(0,184,122,0.1)' : 'rgba(114,112,138,0.1)', color: art.published ? 'var(--green)' : 'var(--muted)' }}>
-                    {art.published ? 'Published' : 'Draft'}
-                  </span>
-                </div>
-                
-                <p style={{ fontSize: '0.85rem', fontWeight: 700, margin: '2px 0 4px 0' }}>{art.title}</p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--muted)', fontWeight: 600, marginBottom: '8px' }}>
-                  👁️ {art.views} views · 📤 {art.shares} shares
-                </p>
-                
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => window.location.href = `/admin?id=${art.id}`} className="admin-btn" style={{ background: 'var(--cyan)', color: 'var(--ink)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 800, border: 'none', cursor: 'pointer' }}>
-                    Edit
-                  </button>
-                  <button onClick={() => handleDelete(art.id)} className="admin-btn" style={{ background: 'var(--red)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 800, border: 'none', cursor: 'pointer' }}>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-}
+                  <input type="text" className="form-input" value={excerpt} onChange={(e) => setExcerpt(e.target

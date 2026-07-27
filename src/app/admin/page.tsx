@@ -37,7 +37,7 @@ export default function AdminPage() {
     const editId = params.get('id');
     if (editId) {
       getArticlesAction().then((res: any) => {
-        const art = res.find((a: any) => a.id === editId); // CORREÇÃO: Tipo 'any' adicionado aqui
+        const art = res.find((a: any) => a.id === editId);
         if (art) {
           setId(art.id);
           setTitle(art.title);
@@ -174,4 +174,32 @@ export default function AdminPage() {
 
                 <div className="form-group">
                   <label>Excerpt / Summary (Italics Hook)</label>
-                  <input type="text" className="form-input" value={excerpt} onChange={(e) => setExcerpt(e.target
+                  <input type="text" className="form-input" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required />
+                </div>
+
+                <div className="form-group">
+                  <label>Main Body (Markdown / HTML)</label>
+                  <textarea className="form-input" rows={12} value={content} onChange={(e) => setContent(e.target.value)} required></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: SEO META */}
+            {activeTab === 'seo' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div className="form-group">
+                  <label>Focus Keyword 🎯</label>
+                  <input type="text" className="form-input" value={focusKeyword} onChange={(e) => setFocusKeyword(e.target.value)} placeholder="e.g. AI productivity tools" />
+                </div>
+
+                <div className="form-group">
+                  <label>Secondary Keywords (Comma separated)</label>
+                  <input type="text" className="form-input" value={secondaryKeywords} onChange={(e) => setSecondaryKeywords(e.target.value)} placeholder="e.g. best AI tools, workflow automation" />
+                </div>
+
+                <div className="form-group">
+                  <label>Search Intent Type</label>
+                  <select className="form-input" value={searchIntent} onChange={(e) => setSearchIntent(e.target.value)}>
+                    <option value="Informational">Informational (User wants to learn)</option>
+                    <option value="Transactional">Transactional (User wants to buy)</option>
+                    <opt
